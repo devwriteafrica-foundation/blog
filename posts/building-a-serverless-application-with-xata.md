@@ -1,0 +1,720 @@
+---
+id: '9836c73d-70e7-42b7-8a3f-b20d993ae265'
+date: { start_date: '2023-10-08' }
+thumbnail: '/covers/building-a-serverless-application-with-xata.jpg'
+type: [ 'Post' ]
+slug: 'building-a-serverless-application-with-xata'
+tags: [ 'serverless database' ,'xata', 'node.js' ]
+author: [ { name: "Ekekenta Clinton", profile_photo: "/authors-avatar/ekekenta-clinton.png" } ]
+title: 'Building a Serverless Application with Xata'
+status: [ 'Public' ]
+createdTime: 'Mon Oct 08 2023 12:19:17 GMT+0100 (GMT+01:00)'
+fullWidth: false
+---
+
+Do you require that level of adaptability in the early stages of developing an app? Xata is a database-focused platform that seamlessly integrates a database with your serverless app. You are not required to manage the underlying infrastructure because Xata will scale your database. You are not required to update software or migrate data to a new server.
+
+## Introduction
+Xata is a database that provides a serverless database service. Consider it a serverless relational database, a search engine, and an analytics engine all wrapped up in a single consistent API. In addition, it includes first-rate branch support, a workflow for zero-downtime schema migrations, and edge caching support.
+
+In this tutorial, we'll walk you through creating a serverless application with Xata and React.js by building a Todo application.
+
+To follow along with this tutorial, you’ll need to install [Node.js 18.13.0](https://nodejs.org/) or newer and NPM 
+
+## Signup to Xata
+To get started and explore all the fantastic features of Xata as a breathable serverless database, you will need to [create a Xata account](https://app.xata.io/signin) if you still need to do so. After a successful login, you can access your [app.xata.io](https://app.xata.io) workspace. Inside workspaces, you can have multiple databases.
+
+## Create a New Project
+Now, let's start building a web app on Xata! To do this, we'll start by creating our Next.js project using `create-next-app`. Next.js is an excellent tool for creating web applications and is famous for server-side rendering. To get started, use the following command:
+
+```shell
+npx create-next-app todo
+```
+
+If everything is in order, we can start a development server with the following command:
+
+```shell
+cd todo && npm run dev
+```
+
+The preceding command will first navigate to our project directory and launch a development server at http://localhost:3000, assuming port 3000 is available. 
+Then, in the following steps, we'll see how to set up Xata in our task manager.
+
+## Configure Xata
+
+Great! We now have a basic app up and running. 
+Let's use the [Xata Command Line Interface (CLI)](https://xata.io/docs/cli/getting-started) to connect to it. 
+To begin, we will install the Xata CLI on a global scale:
+
+```shell
+npm i -g @xata.io/cli
+```
+
+Now that you've installed it, you have a global `xata` command that you can invoke from anywhere. That is why the Xata team recommend installing the CLI globally.
+
+The next thing we will do here is to design our database by navigating to our [workspace](https://app.xata.io/signin) and creating the table for our to-do app. While in, click on the `Add a table` to add an empty table and name it `items`.
+
+![Preview of Xata database for navigating a workspace](https://i.imgur.com/X6cLFCf.png)
+
+Congratulations! You've successfully created a table called `items`:
+
+![Xata Items table](https://i.imgur.com/4OCZkXZ.png)
+
+Now, let's start adding other requirements of our to-do app, which include  `label` (the task name) and `is_done` (checks if a task is done or not) by clicking on the "+" sign close to the id column. We will add a `string` column and name it `label`. After that, add a `boolean` column and name it `is_done`. Your columns should look like this:
+
+![Xata database column preview](https://i.imgur.com/SyqEXYt.png)
+
+Well done! We will learn how to create a new API key in the following steps.
+
+## Create API Key
+Now that we've got the CLI installed, let's tell it who we are: let's login by running the following command in the terminal:
+
+```shell
+xata auth login
+```
+
+When we run the command above, we are given two options: * create a new existing API key by opening a browser, or * paste in an existing one.
+
+
+Because this is a new project, we'll start by selecting the first option after running the command above, which will prompt us to create a new API key in the browser. 
+
+![Creating a new Xata API key preview](https://i.imgur.com/EvTrhtW.png)
+
+Great! close the browser window after creating an API key, then come back to Xata. We will make the UI components for our task manager application in the following step.
+
+## Create Component UI
+Okay! Now, let's add our to-do components and a basic layout to our `index` page:
+
+```js
+export default function Home() {
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Task Manager App</title>
+        <meta name="description" content="Generated by create next app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        <div className={styles.content}>
+          <h1 className={styles.title}>My Task Manager</h1>
+          <ul className={styles.list}>
+            <li className={styles.listItem}>
+              <label className={styles.label}>
+                <input type="checkbox" />
+                <span className={styles.labelText}></span>
+              </label>
+            </li>
+          </ul>
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+The code above creates a simple task manager interface. Make sure you import the required components. First, let's add the styling code in our `Home.module.css` file:
+
+```css
+.container {
+  padding: 0 2rem;
+}
+
+.main {
+  min-height: 100vh;
+  padding: 5rem 0 4rem 0;
+  position: relative;
+}
+
+.content {
+  max-width: 450px;
+  border: 1px solid;
+  border-radius: 7px;
+  padding: 40px 40px 40px 0;
+}
+
+.title {
+  margin: 0;
+  line-height: 1.15;
+  font-size: 2rem;
+}
+
+.title {
+  text-align: center;
+}
+
+.list {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.listItem {
+  border-bottom: 1px solid #222;
+  padding: 20px 0;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.labelText {
+  line-height: 1.5;
+  font-size: 1.1rem;
+}
+.btn {
+  background: blueviolet;
+  height: 35px;
+  width: 80px;
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.delete{
+  font-size: 12px;
+  background: rgb(238, 67, 67);
+  color: white;
+  padding: .3rem .7rem;
+  border-radius: 5px;
+  border: 0;
+  cursor: pointer;
+}
+.input {
+  height: 35px;
+  padding: 0 10px;
+  width: 100%;
+}
+@media (min-width: 399px) {
+  .input {
+    width: 260px;
+  }
+}
+```
+
+Great! So far we've been able to create our application interface, next, we will run some commands to add the API key to our project.
+
+## Get API Key
+The CLI now knows who we are. Let's get started on a project by running the following command:
+
+```shell
+xata init
+```
+
+Running the above command will launch a questionnaire to assist us in configuring our project. Let's answer the questions and generate code.
+
+ If your project development server is still running, now is a good time to kill it and restart it because the Xata CLI added your API key to '.env'. Next. Since '.env' has changed, we'll need to restart your development server.
+ 
+ ![Xata CLI tool preview](https://i.imgur.com/49W18Ds.png)
+
+If you see the output above, it means you've successfully set up Xata configurations in your app.
+
+Great! Now, let's create our application API Routes.
+
+## Create NextJs API Routes
+Creating API Routes in Next.js is similar to creating a page route. The difference is that API Routes are made in the `api` folder located in your application's `pages` folder, and any file found in the `pages/api` folder will be treated as an API endpoint.
+
+Now, let's navigate to our `pages/api` folder and create a new file named `add-todo.js` inside it, this route will handle the `POST` method, which creates new data in our database:
+
+**./pages/api/add-todo.js**
+
+```js
+import { xata } from "../../src/xataClient";
+
+const handler = async (req, res) => {
+  const { label, is_done } = req.body;
+  await xata.db.items.create({ is_done, label });
+};
+
+export default handler;
+```
+
+Let's talk about what just happened.
+
+First, we imported a component name `xata` from `../../src/xataClient`, when did we create that? Let's do that!
+
+Navigate to the `src` folder and create a `xataClient.js` file then add the following code to it:
+
+```js
+import { XataClient } from "./xata";
+
+export const xata = new XataClient();
+```
+
+First, we imported our generated `XataClient` that we got from the CLI:
+
+```js
+import { XataClient } from '../../src/xata';
+```
+
+Then, we instantiated a new `XataClient`:
+
+```js
+const xata = new XataClient();
+```
+
+If the credentials parsing from `.env` fails, you'll get an error. However, you can pass your API key manually with the `apiKey` constructor option.
+
+```js
+const xata = new XataClient({ apiKey: XATA_API_KEY })
+```
+
+In the next step, we will use the API route created to create new data in our `items` table.
+
+**Note:**  We will also create other handlers (delete-todo, toggle-todo) inside this `api` folder.
+
+## Create New Data
+Let's create a form component to add a new to-do item to our list. We'll do this in `./components/AddTodoForm.jsx`.
+
+```js
+import { useState } from "react";
+import styles from "../styles/Home.module.css";
+
+export const AddTodoForm = () => {
+  const [label, setLabel] = useState("");
+
+  const submit = () => {
+    if (label !== "") { // check that label is not empty
+      fetch("/api/add-todo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          label,
+        }),
+      }).then(() => window.location.reload());
+    }
+  };
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        submit();
+        setLabel('');
+      }}
+      className={styles.label}
+      style={{padding: '0 0 0 40px', margin: '40px 0 0'}}
+    >
+      <label>
+        <input
+          type="text"
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          placeholder="Write some code?"
+          className={styles.input}
+        />
+      </label>
+      <button className={styles.btn}>Save</button>
+    </form>
+  );
+};
+```
+
+In the code above, we created a component that contains a single text input and a button. When the user submits the form, we want to prevent the default behaviour of navigating away or reloading the page, and, instead, call a [Next.js API route](https://nextjs.org/docs/api-routes/introduction) that creates a new to-do item.
+
+We can then add this new component to our `index.js` page:
+
+![Using Xata serverless API in a React component](https://i.imgur.com/oZCO9Dy.png)
+
+When we run it, we can now add new to-do list items.
+
+## Query Data
+To query Xata from our to-do app, we will use `getServerSideProps`. This function will be called by Next.js when it renders our page. We will also import the `xataClient` component we created and use it here.
+
+Let's modify our `index.js` file:
+
+```js
+export default function Home({ todos }) {
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Task Manager App</title>
+        <meta name="description" content="Generated by creating next app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        <div className={styles.content}>
+          <h1 className={styles.title}>My Task Manager</h1>
+          <ul className={styles.list}>
+            {todos.map((todo) => (
+              <li className={styles.listItem} key={todo.id}>
+                <label className={styles.label}>
+                  <input type="checkbox" />
+                  <span className={styles.labelText}>{todo.label}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+          <AddTodoForm />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+export const getServerSideProps = async () => {
+  const todos = await xata.db.items.getMany();
+  return { props: { todos } };
+};
+```
+
+In the code above, we used the `xata` client instance in our `getServerSideProps` function to get to-do `items` from Xata:
+
+```js
+export const getServerSideProps = async () => {
+  const todos = await xata.db.items.getMany();
+  return { props: { todos } };
+};
+```
+
+We use the `getMany` query method to return a subset of records in the table query results in an array.
+
+![Fetching data from Xata serverless database](https://i.imgur.com/CnCIFzd.png)
+
+That's it! Now, our to-do app is actively making a query to Xata and rendering to-do list items from our database!
+
+## Update Data
+Great! Our to-do app now adds and reads data from Xata. What we will learn in this step is how to update the record on Xata to have `is_done` set to `true` when we click a to-do item. To do this, let's add an `onClick` event handler to the checkbox element:
+
+```js
+export default function Home({ todos }) {
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Task Manager App</title>
+        <meta name="description" content="Generated by create next app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        <div className={styles.content}>
+          <h1 className={styles.title}>My Task Manager</h1>
+          <ul className={styles.list}>
+            {todos.map((todo) => (
+              <li className={styles.listItem} key={todo.id}>
+                <label className={styles.label}>
+                  <input
+                    type="checkbox"
+                    defaultChecked={todo.is_done}
+                    onClick={() => {
+                      fetch("/api/toggle-todo", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          id: todo.id,
+                          is_done: !todo.is_done,
+                        }),
+                      }).then(() => {
+                        window.location.reload();
+                      });
+                    }}
+                  />
+                  <span className={styles.labelText}>{todo.label}</span>
+                </label>
+              </li>
+            ))}
+          </ul>
+          <AddTodoForm />
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+In the above code, we sent a request to our Next.js API route to toggle the to-do item. In the handler for this API route, we will talk to Xata and update the to-do item. Let's create a file called `./pages/api/toggle-todo.js`, and implement it like this:
+
+```js
+import { xata } from "../../src/xataClient";
+
+const handler = async (req, res) => {
+  const { id, is_done } = req.body;
+  await xata.db.items.update({ is_done, id });
+  res.end();
+};
+
+export default handler;
+```
+
+Let's save and revisit our app.
+
+![Updating data in Xata serverless database](https://i.imgur.com/u2zb4OF.png)
+
+Great! It works! We're successfully updating data on Xata.
+
+## Delete Data
+So currently, our to-do app can **R**ead data from Xata, and **U**pdate to-do items but we cannot **D**elete data because we do not have a delete button to do so. So let's add a button to delete a to-do item.
+
+```js
+export default function Home({ todos }) {
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Task Manager App</title>
+        <meta name="description" content="Generated by creating next app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        <div className={styles.content}>
+          <h1 className={styles.title}>My Task Manager</h1>
+          <ul className={styles.list}>
+            {todos.map((todo) => (
+              <li className={styles.listItem} key={todo.id}>
+                <label className={styles.label}>
+                  <input
+                    type="checkbox"
+                    defaultChecked={todo.is_done}
+                    onClick={() => {
+                      fetch("/api/toggle-todo", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          id: todo.id,
+                          is_done: !todo.is_done,
+                        }),
+                      }).then(() => {
+                        window.location.reload();
+                      });
+                    }}
+                  />
+                  <span className={styles.labelText}>{todo.label}</span>
+                  <button
+                    className={styles.delete}
+                    onClick={() => {
+                      fetch("/api/delete-todo", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ id: todo.id }),
+                      }).then(() => {
+                        window.location.reload();
+                      });
+                    }}
+                  >
+                    Delete
+                  </button>
+                </label>
+              </li>
+            ))}
+          </ul>
+          <AddTodoForm />
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+Of course, the API route doesn't exist. So let's create a new one in `./pages/api/delete-todo.js` and add the following code inside it:
+
+```js
+import { xata } from "../../src/xataClient";
+
+const handler = async (req, res) => {
+  const { id } = req.body;
+  await xata.db.items.delete(id);
+  res.end();
+};
+
+export default handler;
+```
+
+Awesome! We've done it! We finally have a complete CRUD application built on Xata.
+
+## Implement Authentication
+Now, let's explore how we can add multiple users to our app and enable authentication for them. First, we will add a new table for our users. The users' table will contain columns `username` and `password`, both of `string` type.
+
+Here's how to update the schema conveniently with the Xata CLI, by running the following command:
+
+```sh
+xata schema edit
+```
+
+In the dialog menu, let's choose "Add a table", set the Name of the table to `users` and optionally add the description *`A table of users`*. Once the table is created, choose the option `Add a column` below the user's table to create two columns for it:
+
+* a column with the username of type `string` and description `A user's unique name`.
+* a column with the name `password` of type `string` and description `Always hash the password`.
+
+Once the columns are created, select "Run migration" and acknowledge the prompt requesting confirmation `(Y/n)`.
+
+Now also add a column to the `items` table, with the name `user` of type `link` linking to the users table. The link column type enables us to point a record in the `items` table to an associated record in the `users` table, thus representing a relation between those two records which live in different tables. 
+
+The Xata CLI regenerates the schema for the XataClient automatically once the migration is completed. If you did not use the Xata CLI to create the `users` table and the `link` column, make sure to run `xata codegen` to regenerate your `XataClient` to include the latest schema updates.
+
+![Xata CLI tool preview](https://i.imgur.com/LCdre21.png)
+
+Let's add some Basic Auth to our Next.js App. First, note that passwords should never be stored in plain text, so we will use [bcrypt](https://www.npmjs.com/package/bcrypt) to handle cryptography for us, so that passwords are hashed before they are stored.
+
+You can install `bcrypt` with the following commands:
+
+```sh
+npm i bcrypt
+npm i @types/bcrypt -D
+```
+
+Now let's create our authentication utility inside `./src/authorize.js`:
+
+```js
+import { getXataClient } from "./xata";
+import bcrypt from "bcrypt";
+import { promisify } from "util";
+
+const compare = promisify(bcrypt.compare);
+const hash = promisify(bcrypt.hash);
+
+export const authorize = async (req) => {
+  const { authorization } = req.headers;
+  if (!authorization) {
+    return { isAuthenticated: false };
+  }
+
+  // authorization: "Basic base64(username:password)"
+  const [, credentials] = authorization.split(" ");
+  const [username, password] = Buffer.from(credentials, "base64")
+    .toString("utf-8")
+    .split(":");
+
+  const xata = getXataClient();
+  const user = await xata.db.users.filter({ username }).getFirst();
+
+  // user doesn't exist
+  if (!user) {
+    await xata.db.users.create({
+      username,
+      password: await hash(password, 10),
+    });
+    return { isAuthenticated: true, username };
+  }
+
+  // user exists, we have the password
+  const passwordsMatch = compare(password, user.password);
+
+  if (!passwordsMatch) {
+    return { isAuthenticated: false, username };
+  }
+
+  return { isAuthenticated: true, username };
+};
+```
+
+Time to configure our application to use the authentication utility by modifying `getServerSideProps` to call `authorize`:
+
+```sh
+export const getServerSideProps = async ({req, res}) => {
+  const { isAuthenticated, username } = await authorize(req);
+
+  if (isAuthenticated) {
+    const xata = getXataClient();
+    const todos = await xata.db.items
+      .filter("user.username", username) // to-do items are now filtered to the current authenticated user
+      .getMany();
+
+    return {
+      props: {
+        todos,
+      },
+    };
+  } else {
+    res.writeHead(401, {
+      "WWW-Authenticate": "Basic realm='This is a private to-do list'",
+    });
+
+    res.end();
+    return {};
+  }
+};
+```
+
+Do not forget to import `authorize` and `getXataClient` components.
+
+Finally let's update all our application's [API routes](https://nextjs.org/docs/api-routes/introduction) to use the new authentication workflow:
+
+**./pages/api/add-todo.js**
+```sh
+import { authorize } from "../../src/authorize";
+import { getXataClient } from "../../src/xata";
+
+const handler = async (req, res) => {
+  const { isAuthenticated, username } = await authorize(req);
+  if (!isAuthenticated) {
+    res.status(401).end();
+    return;
+  }
+  const { label, is_done } = req.body;
+  const xata = getXataClient();
+  const user = await xata.db.users.filter({ username }).getFirst();
+  await xata.db.items.create({ label, is_done, user: { id: user.id } });
+  res.end();
+};
+
+export default handler;
+```
+
+**./pages/api/toggle-todo.js**
+
+```sh
+import { authorize } from "../../src/authorize";
+import { getXataClient } from "../../src/xata";
+
+const handler = async (req, res) => {
+  const { isAuthenticated } = await authorize(req);
+  if (!isAuthenticated) {
+    res.status(401).end();
+    return;
+  }
+  const { id, is_done } = req.body;
+  const xata = getXataClient();
+  await xata.db.items.update({ id, is_done });
+  res.end();
+};
+
+export default handler;
+```
+
+**./pages/api/delete-todo.js**
+```sh
+import { authorize } from "../../src/authorize";
+import { getXataClient } from "../../src/xata";
+
+const handler = async (req, res) => {
+  const { isAuthenticated, username } = await authorize(req);
+  if (!isAuthenticated) {
+    res.status(401).end();
+    return;
+  }
+  const { id } = req.body;
+  await getXataClient().db.items.delete(id);
+  res.end();
+};
+
+export default handler;
+
+```
+
+We've made it! Now our Next.js app is authenticating users, storing their passwords in a secure cryptographic way in Xata and automatically relates items to our authenticated users! So we finally have a complete CRUD application with authentication built on Xata.
+
+## Test Application
+Let's test our application to ensure everything is working as expected. Refresh your interface. You will be required to sign in, and you can do so by entering your `username` and `password`. You will find the details you've entered inside your `users` database table:
+
+![Xata serverless database autentication](https://i.imgur.com/yEKQv25.png)
+
+Only when you've successfully signed in will you be able to perform the CRUD operations.
+
+![Preview a Xata serverless application](https://i.imgur.com/tSBnjAx.png)
+
+
+## Conclusion
+This to-do application is open source, and all of its code is available on [GitHub](https://github.com/icode247/xata-demo). If you'd like to run it locally, you'll need to add a [Xata API key](https://xata.io/docs/concepts/api-keys) in an `.env` file at its root after you clone it. I hope you enjoyed this tutorial!

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>https://devwriteafrica.com</loc><lastmod>2024-01-10T15:13:17.479Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/conduct</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/join</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/build-a-blog-with-astroJS-using-mdx-ntegration</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/build-a-photo-gallery-with-gatsby-and-webiny-headless-cms</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/building-a-full-stack-application-with-remult-using-react-frontend</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/building-a-rich-text-editor-with-react-and-milkdown</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/building-a-searchable-support-hub-in-typeScript</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/building-a-serverless-application-with-xata</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/building-a-static-web-app-with-factor.js</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/connect-to-hazelcast-with-jupyter-notebooks</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/how-to-build-a-documentation-website-with-docusaurus</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/how-to-build-a-graphQL-api-with-nestjs-and-postgresql</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://devwriteafrica.com/how-to-implement-pagination-with-webiny-headless-cms-in-svelte</loc><lastmod>2024-01-10T15:13:17.480Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>

@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://devwriteafrica.com
+
+# Sitemaps
+Sitemap: https://devwriteafrica.com/sitemap.xml
