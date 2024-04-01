@@ -13,7 +13,7 @@ const CONFIG = {
   projects: [
     {
       name: `Devwrites Africa`,
-      href: "https://github.com/devwriteafrica/blog",
+      href: "https://github.com/devwriteafrica-foundation/blog",
     },
   ],
   // blog setting (required)
