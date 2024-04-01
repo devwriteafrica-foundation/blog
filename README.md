@@ -23,7 +23,7 @@ To submit a draft PR, follow the following steps:
 2. Research extensively on the topic.
 3. Fork the Devwrites blog repository and clone the Devwrites blog repo.
 ```
-git clone https://github.com/devwriteafrica/blog
+git clone https://github.com/devwriteafrica-foundation/blog
 ```
 4. Create a new blog in **posts** directory.
 5. Write the contents of the blog in markdown format([see samples here](https://github.com/devwriteafrica/blog/tree/main/posts)).
